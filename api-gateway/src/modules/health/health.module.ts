@@ -1,15 +1,17 @@
-import { Injector } from "../../common/injectors/injector";
-import { IRoute } from "../../types";
+import { Router } from "express";
+import { MODULE_ROUTERS } from "../../common/constants";
+import { Module } from "../../common/decorators";
 import { HealthController } from "./controllers/health.controller";
 
+@Module({ controllers: [HealthController] })
 export class HealthModule {
-  private readonly healthController: HealthController;
+  private _routers: Router[] = [];
 
   constructor() {
-    this.healthController = Injector.resolve(HealthController);
+    this._routers = Reflect.getMetadata(MODULE_ROUTERS, HealthModule);
   }
 
-  get routers(): IRoute[] {
-    return this.healthController.routes;
+  get routers(): Router[] {
+    return this._routers;
   }
 }

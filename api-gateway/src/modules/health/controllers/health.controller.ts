@@ -1,38 +1,13 @@
-import { Router } from "express";
-import { Controller, Injectable } from "../../../common/decorators";
-import { IRoute } from "../../../types";
+import { Request, Response } from "express";
+import { Controller, GET } from "../../../common/decorators";
+import { HealthService } from "../services/health.service";
 
-@Injectable()
-export class HealthService {
-  constructor() {}
-
-  display() {
-    console.log("Service");
-  }
-}
-
-@Controller()
+@Controller("/health")
 export class HealthController {
-  private readonly path = "/health";
-  private readonly _routes: IRoute[] = [];
+  constructor(private readonly service: HealthService) {}
 
-  constructor(private readonly service: HealthService) {
-    this.initialize();
-    this.service.display();
-  }
-
-  private initialize() {
-    const root = { path: this.path, type: "GET", callback: this.getHealth() };
-    this._routes.push(root);
-  }
-
-  getHealth(): Router {
-    return Router().get("/health", (request, response) => {
-      response.send("Simple API Gateway");
-    });
-  }
-
-  get routes(): IRoute[] {
-    return this._routes;
+  @GET()
+  getHealth(req: Request, res: Response): unknown {
+    return res.send({ name: "toto" });
   }
 }

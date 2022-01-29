@@ -1,3 +1,5 @@
-import { Router } from "express";
-
-export type IRoute = { path: string; type: string; callback: Router };
+export type IRoute = {
+  method: string;
+  path: string;
+  handlerName: string | symbol;
+};
