@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { Request, Response, Router } from "express";
 import { logger } from "../../config/logger.config";
 import { IRoute } from "../../types";
 import {
@@ -40,10 +40,27 @@ function buildRouters(
 ): Router[] {
   return getRouters.map(({ method, path, handlerName }) => {
     const uri = `${basePath}${path}`;
-    const middleware = controller[handlerName].bind(controller);
+    const controllerFn = controller[handlerName].bind(controller);
     logger.info(`Mapped { ${uri}, ${method.toLocaleUpperCase()} } route`);
+    const middleware = wrapControllerFn(controllerFn, method);
     return (expressRouter as any)[method](uri, middleware);
   });
+}
+
+type Error = { status: number; message: string }; // create manager error
+function wrapControllerFn(controllerFn: Function, method: string) {
+  return (req: Request, res: Response) => {
+    console.log("in module decorator");
+    const { params, body, query } = req;
+    try {
+      const data = controllerFn({ params, body, query });
+      const status = method === "POST" ? 201 : 200; // Create a method to get a default http status by method
+      res.status(status).send(data);
+    } catch (error) {
+      const { status, message } = error as Error;
+      res.status(status).send(message);
+    }
+  };
 }
 
 function checkAllowedModuleKeys(moduleName: string, keys: string[]): void {

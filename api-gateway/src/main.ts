@@ -12,4 +12,5 @@ function bootstrap() {
     logger.info(`Api gatewait listening at http://localhost:${PORT}`);
   });
 }
+
 bootstrap();

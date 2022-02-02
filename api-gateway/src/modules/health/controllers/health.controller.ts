@@ -1,4 +1,3 @@
-import { Request, Response } from "express";
 import { Controller, GET } from "../../../common/decorators";
 import { HealthService } from "../services/health.service";
 
@@ -7,7 +6,8 @@ export class HealthController {
   constructor(private readonly service: HealthService) {}
 
   @GET()
-  getHealth(req: Request, res: Response): unknown {
-    return res.send({ name: "toto" });
+  getHealth(toto: any): { content: string } {
+    console.log({ toto });
+    return { content: "je l'aime" };
   }
 }
