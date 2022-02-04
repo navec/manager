@@ -6,8 +6,7 @@ export class HealthController {
   constructor(private readonly service: HealthService) {}
 
   @GET()
-  getHealth(toto: any): { content: string } {
-    console.log({ toto });
-    return { content: "je l'aime" };
+  getHealth(toto?: any): Record<string, string> {
+    return { apiGateway: "running" };
   }
 }

@@ -13,6 +13,7 @@ export class Injector {
     const injections = tokens.map((token: Type<any>): any =>
       Injector.resolve(token)
     );
+    // implement singleton or prototype
     const instance = new target(...injections);
     Injector.container.set(target.name, instance);
     return instance;
