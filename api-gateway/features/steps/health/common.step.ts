@@ -1,5 +1,5 @@
 import { BeforeAll } from "@cucumber/cucumber";
-import { Application } from "@src/main";
+import { Application } from "@src/application";
 
 export const context: {
   app?: Application;

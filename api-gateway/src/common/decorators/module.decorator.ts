@@ -1,6 +1,5 @@
-import { Request, Response, Router } from "express";
+import { Router } from "express";
 import { logger } from "../../config/logger.config";
-import { IRoute } from "../../types";
 import {
   BASE_PATH,
   MODULE,
@@ -8,9 +7,7 @@ import {
   MODULE_ROUTERS,
   ROUTER,
 } from "../constants";
-import { Injector } from "../injectors/injector";
-
-const expressRouter = Router();
+import { MiddlewareHelper } from "../helpers/middleware.helper";
 
 export function Module(options: any) {
   return function <T extends Function>(target: T) {
@@ -20,46 +17,16 @@ export function Module(options: any) {
     logger.info(`${target.name} is loaded`);
 
     const allRouters = options.controllers.reduce(
-      (acc: Router[], controller: any) => {
-        const base = Reflect.getMetadata(BASE_PATH, controller);
-        const routers = Reflect.getMetadata(ROUTER, controller);
-        const controllerInstance = Injector.resolve(controller);
-        const expressRouters = buildRouters(routers, base, controllerInstance);
-        return [...acc, ...expressRouters];
+      (acc: Router[], controller: Function) => {
+        const basePath = Reflect.getMetadata(BASE_PATH, controller);
+        const routerList = Reflect.getMetadata(ROUTER, controller);
+        const options = { routerList, basePath, controller };
+        const routers = MiddlewareHelper.buildExpressRouters(options);
+        return [...acc, ...routers];
       },
       []
     ) as Router[];
     Reflect.defineMetadata(MODULE_ROUTERS, allRouters, target);
-  };
-}
-
-function buildRouters(
-  getRouters: IRoute[],
-  basePath: string,
-  controller: any
-): Router[] {
-  return getRouters.map(({ method, path, handlerName }) => {
-    const uri = `${basePath}${path}`;
-    const controllerFn = controller[handlerName].bind(controller);
-    logger.info(`Mapped { ${uri}, ${method.toLocaleUpperCase()} } route`);
-    const middleware = wrapControllerFn(controllerFn, method);
-    return (expressRouter as any)[method](uri, middleware);
-  });
-}
-
-type Error = { status: number; message: string }; // create manager error
-function wrapControllerFn(controllerFn: Function, method: string) {
-  return (req: Request, res: Response) => {
-    console.log("in module decorator");
-    const { params, body, query } = req;
-    try {
-      const data = controllerFn({ params, body, query });
-      const status = method === "POST" ? 201 : 200; // Create a method to get a default http status by method
-      res.status(status).send(data);
-    } catch (error) {
-      const { status, message } = error as Error;
-      res.status(status).send(message);
-    }
   };
 }
 
