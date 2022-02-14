@@ -1,4 +1,5 @@
 import { Router } from "express";
+import passport from "passport";
 import { logger } from "../../config/logger.config";
 import {
   BASE_PATH,
@@ -8,6 +9,7 @@ import {
   ROUTER,
 } from "../constants";
 import { MiddlewareHelper } from "../helpers/middleware.helper";
+import { Injector } from "../injectors/injector";
 
 export function Module(options: any) {
   return function <T extends Function>(target: T) {
@@ -15,6 +17,11 @@ export function Module(options: any) {
     Reflect.defineMetadata(MODULE, true, target);
 
     logger.info(`${target.name} is loaded`);
+
+    (options.strategies || []).forEach((item: any) => {
+      const strategy = Injector.resolve(item);
+      passport.use(strategy);
+    });
 
     const allRouters = options.controllers.reduce(
       (acc: Router[], controller: Function) => {

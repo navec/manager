@@ -1,4 +1,4 @@
-import { Request, Response, Router } from "express";
+import { NextFunction, Request, Response, Router } from "express";
 import "reflect-metadata";
 import { logger } from "../../config/logger.config";
 import { IRoute } from "../../types/route.interface";
@@ -16,26 +16,32 @@ export class MiddlewareHelper {
   }): Router[] {
     const { routerList: getRouters, basePath, controller } = options;
     const ctrlInstance = Injector.resolve<any>(controller);
-    const hasGuard = Reflect.getMetadata(GUARD, controller);
+    const guards = Reflect.getMetadata(GUARD, controller);
     return getRouters.map(({ method, path, handlerName }) => {
       const uri = `${basePath}${path}`;
       const controllerFn = ctrlInstance[handlerName].bind(ctrlInstance);
       const middleware = this._wrapControllerFn(controllerFn, method);
 
       logger.info(`Mapped { ${uri}, ${method.toLocaleUpperCase()} } route`);
-      const router = (this.expressRouter as any)[method](uri, middleware);
-      if (hasGuard) {
-        // Should return router with auth middleware ('uri', authMiddleware, middleware)
+      if (guards) {
+        const strategyGuardInstance = Injector.resolve(guards[0]);
+        return (this.expressRouter as any)[method](
+          uri,
+          (req: Request, res: Response, next: NextFunction) => {
+            strategyGuardInstance["check"](req, res, next);
+          },
+          middleware
+        );
       }
-      return router;
+      return (this.expressRouter as any)[method](uri, middleware);
     });
   }
 
   private static _wrapControllerFn(controllerFn: Function, method: string) {
-    return (req: Request, res: Response) => {
+    return (req: Request, res: Response, next: NextFunction) => {
       const { params, body, query } = req;
       try {
-        const data = controllerFn({ params, body, query });
+        const data = controllerFn({ params, body, query, res, req, next });
         const status = method === "POST" ? 201 : 200; // Create a method to get a default http status by method
         res.status(status).send(data);
       } catch (error) {

@@ -1,5 +1,5 @@
 export const MODULE_METADATA = {
-  SERVICES: "services",
+  STRATEGIES: "strategies",
   CONTROLLERS: "controllers",
 };
 
@@ -11,6 +11,7 @@ export const INJECTABLE = "__injectable__";
 export const CONTROLLER = "__controller__";
 export const MODULE = "__module__";
 export const GUARD = "__guard__";
+export const CONFIG = "__config__";
 
 export const MODULE_ROUTERS = "module_routers";
 

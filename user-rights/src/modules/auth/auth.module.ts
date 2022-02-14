@@ -3,8 +3,9 @@ import { MODULE_ROUTERS } from "../../common/constants";
 import { Module } from "../../common/decorators";
 import { IModule } from "../../types";
 import { AuthController } from "./controllers/auth.controller";
+import { SignupStrategy } from "./strategies/signup.strategy";
 
-@Module({ controllers: [AuthController] })
+@Module({ controllers: [AuthController], strategies: [SignupStrategy] })
 export class AuthModule implements IModule {
   private _routers: Router[];
 

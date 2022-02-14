@@ -5,7 +5,7 @@ interface Type<T> {
 export class Injector {
   private static container = new Map<string, any>();
 
-  static resolve<T>(target: Type<T>): T {
+  static resolve<T = any>(target: Type<T>): T {
     if (Injector.container.has(target.name)) {
       return Injector.container.get(target.name);
     }

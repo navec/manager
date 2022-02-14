@@ -7,7 +7,7 @@ import { IModule } from "./types";
 export class Application {
   private static app: Application;
   private static server: Express;
-  private modules: IModule[] = [];
+  private _modules: IModule[] = [];
 
   private constructor() {
     Application.server = express();
@@ -22,17 +22,13 @@ export class Application {
     return this.app;
   }
 
-  addModules(modules: IModule | IModule[]): Application {
-    const modulesToAdd = Array.isArray(modules)
-      ? modules.filter((module) => !this.modules.includes(module))
-      : [modules];
-    this.modules = [...this.modules, ...modulesToAdd];
+  addModules(modules: IModule[]): Application {
+    this._modules = [...this._modules, ...modules];
     return this;
   }
 
   start(port: number): Application {
-    const modules = this.modules || [];
-    modules.forEach((module) => Application.server.use(module.routes));
+    this._modules.forEach((module) => Application.server.use(module.routes));
 
     Application.server.listen(port, () => {
       logger.info(`Api gatewait listening at http://localhost:${port}`);

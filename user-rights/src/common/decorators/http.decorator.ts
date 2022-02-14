@@ -11,7 +11,7 @@ export function GET(path = ""): MethodDecorator {
   };
 }
 
-export function POST(path = ""): MethodDecorator {
+export function Post(path = ""): MethodDecorator {
   return <T>(target: Object, propertyKey: string | symbol) => {
     const controllerClass = target.constructor;
     const routers: IRoute[] =
