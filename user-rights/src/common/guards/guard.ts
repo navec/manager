@@ -1,9 +1,5 @@
 import { NextFunction, Request, Response } from "express";
 import passport from "passport";
-import {
-  AuthController,
-  TEST_PARAM_KEY,
-} from "../../modules/auth/controllers/auth.controller";
 
 export class Guard {
   private readonly _name: string;
@@ -22,8 +18,6 @@ export class Guard {
   }
 
   check(req: Request, res: Response, next: NextFunction) {
-    const toto = new AuthController();
-    console.log("debug", Reflect.getMetadata(TEST_PARAM_KEY, toto, "signup"));
     passport.authenticate(this._name, { session: false }, (err, user, info) => {
       const data = this.validate(err, user, info);
       req.user = data;

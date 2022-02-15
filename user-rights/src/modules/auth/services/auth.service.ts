@@ -1,6 +1,7 @@
 export class AuthService {
-  createUser(user: any): any {
-    return user;
-    // throw new Error("Method not implemented.");
+  createUser({ email }: { email: string; passport: string }): {
+    email: string;
+  } {
+    return { email };
   }
 }

@@ -1,22 +1,30 @@
-import { IRoute } from "../../types";
-import { ROUTER } from "../constants";
+import { HTTP_METADATA, ROUTER } from "../constants";
 
-export function GET(path = ""): MethodDecorator {
-  return <T>(target: Object, propertyKey: string | symbol) => {
+function HttpMethodDecorator(method: string, path = ""): MethodDecorator {
+  return (
+    target: any,
+    propertyKey: string | symbol,
+    descriptor: TypedPropertyDescriptor<any>
+  ) => {
     const controllerClass = target.constructor;
-    const routers: IRoute[] =
-      Reflect.getMetadata(ROUTER, controllerClass) || [];
-    routers.push({ method: "get", path, handlerName: propertyKey });
+    const routers = Reflect.getMetadata(ROUTER, controllerClass) || [];
+    routers.push({ method, path, handlerName: propertyKey });
     Reflect.defineMetadata(ROUTER, routers, controllerClass);
+
+    const originalFn = descriptor.value;
+    descriptor.value = function (data: any) {
+      const args = Object.values(HTTP_METADATA)
+        .map((item) => Reflect.getMetadata(item, target, propertyKey))
+        .filter(Boolean)
+        .sort((a: any, b: any) => a.index - b.index)
+        .map((item) => data[item.type]);
+      return originalFn.call(this, ...args);
+    };
   };
 }
 
-export function Post(path = ""): MethodDecorator {
-  return <T>(target: Object, propertyKey: string | symbol) => {
-    const controllerClass = target.constructor;
-    const routers: IRoute[] =
-      Reflect.getMetadata(ROUTER, controllerClass) || [];
-    routers.push({ method: "post", path, handlerName: propertyKey });
-    Reflect.defineMetadata(ROUTER, routers, controllerClass);
-  };
-}
+export const Get = (path = "") => HttpMethodDecorator("get", path);
+export const Post = (path = "") => HttpMethodDecorator("post", path);
+export const Patch = (path = "") => HttpMethodDecorator("patch", path);
+export const Put = (path = "") => HttpMethodDecorator("put", path);
+export const Delete = (path = "") => HttpMethodDecorator("delete", path);

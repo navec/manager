@@ -42,7 +42,7 @@ export class MiddlewareHelper {
       const { params, body, query } = req;
       try {
         const data = controllerFn({ params, body, query, res, req, next });
-        const status = method === "POST" ? 201 : 200; // Create a method to get a default http status by method
+        const status = method === "post" ? 201 : 200; // Create a method to get a default http status by method
         res.status(status).send(data);
       } catch (error) {
         const { status, message } = error as Error;

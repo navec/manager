@@ -13,12 +13,11 @@ describe(`${AuthController.name}`, () => {
     it("Should return user without passport data", () => {
       // Given
       const user = { email: "fake@email.com", passport: "fake" };
-      const input = { req: { user } };
       const { passport, ...expected } = user;
       jest.spyOn(service, "createUser").mockReturnValueOnce(expected);
 
       // When
-      const actual = controller.signup(input);
+      const actual = controller.signup(user);
 
       // Then
       expect(actual).toEqual(expected);

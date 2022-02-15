@@ -5,6 +5,11 @@ export const MODULE_METADATA = {
 
 export const HTTP_METADATA = {
   PARAMS: Symbol("__http_params__"),
+  BODY: Symbol("__http_body__"),
+  QUERY: Symbol("__http_query__"),
+  RESPONSE: Symbol("__http_response__"),
+  REQUEST: Symbol("__http_request__"),
+  NEXT: Symbol("__http_next__"),
 };
 
 export const INJECTABLE = "__injectable__";
