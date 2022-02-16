@@ -3,9 +3,9 @@ import { MODULE_ROUTERS } from "../../common/constants";
 import { Module } from "../../common/decorators";
 import { IModule } from "../../types";
 import { AuthController } from "./controllers/auth.controller";
-import { SignupStrategy } from "./strategies/signup.strategy";
+import { AuthFieldStrategy } from "./strategies/auth-field.strategy";
 
-@Module({ controllers: [AuthController], strategies: [SignupStrategy] })
+@Module({ controllers: [AuthController], strategies: [AuthFieldStrategy] })
 export class AuthModule implements IModule {
   private _routers: Router[];
 
