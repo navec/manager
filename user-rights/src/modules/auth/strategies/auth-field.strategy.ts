@@ -1,4 +1,4 @@
-import { LocalStrategy } from "../../../common/strategies/local.strategie";
+import { LocalStrategy } from "../../../common/strategies/local.strategy";
 
 export class AuthFieldStrategy extends LocalStrategy {
   static SIGN_UP_STRATEGY_NAME = "auth_field";
