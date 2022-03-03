@@ -2,9 +2,9 @@ import { Router } from "express";
 import { MODULE_ROUTERS } from "../../common/constants";
 import { Module } from "../../common/decorators";
 import { IModule } from "../../types";
+import { AuthFieldStrategy } from "../common/strategies/auth-field.strategy";
+import { AuthJwtStrategy } from "../common/strategies/auth-jwt.strategy";
 import { AuthController } from "./controllers/auth.controller";
-import { AuthFieldStrategy } from "./strategies/auth-field.strategy";
-import { AuthJwtStrategy } from "./strategies/auth-jwt.strategy";
 
 @Module({
   controllers: [AuthController],

@@ -1,4 +1,4 @@
-import { HealthStatus } from "../types/health-status.interface";
+import { HealthStatus } from "../interfaces/health-status.interface";
 import { HealthController } from "./health.controller";
 
 describe(`${HealthController.name}`, () => {

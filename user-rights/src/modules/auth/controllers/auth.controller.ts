@@ -6,8 +6,8 @@ import {
   Request,
   UseGuards,
 } from "../../../common/decorators";
-import { AuthFieldGuard } from "../guards/auth-fied.guard";
-import { AuthJwtGuard } from "../guards/auth-jwt.guard";
+import { AuthFieldGuard } from "../../common/guards/auth-fied.guard";
+import { AuthJwtGuard } from "../../common/guards/auth-jwt.guard";
 import { AuthService } from "../services/auth.service";
 
 @Controller("/auth")
@@ -22,7 +22,7 @@ export class AuthController {
 
   @UseGuards(AuthFieldGuard)
   @Post("/login")
-  login(@Body() user: { email: string; password: string }): { token: string } {
+  logins(@Body() user: { email: string; password: string }): { token: string } {
     return this._authService.generateToken(user);
   }
 

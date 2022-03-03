@@ -16,15 +16,16 @@ export class MiddlewareHelper {
   }): Router[] {
     const { routerList: getRouters, basePath, controller } = options;
     const ctrlInstance = Injector.resolve<any>(controller);
-    const guards = Reflect.getMetadata(GUARD, controller);
     return getRouters.map(({ method, path, handlerName }) => {
       const uri = `${basePath}${path}`;
       const controllerFn = ctrlInstance[handlerName].bind(ctrlInstance);
       const middleware = this._wrapControllerFn(controllerFn, method);
 
       logger.info(`Mapped { ${uri}, ${method.toLocaleUpperCase()} } route`);
-      if (guards) {
-        const strategyGuardInstance = Injector.resolve(guards[0]);
+
+      const guard = Reflect.getMetadata(GUARD, controller, handlerName);
+      if (guard) {
+        const strategyGuardInstance = Injector.resolve(guard);
         return (this.expressRouter as any)[method](
           uri,
           (req: Request, res: Response, next: NextFunction) => {
